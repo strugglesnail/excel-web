@@ -9,12 +9,12 @@ import java.util.*;
  * @date 2020/10/19 20:58
  * @desc Excel文件导入
  */
-public abstract class ImportUtils {
+public class ImportUtils {
 
     //获取Excel数据集合
 
     // 获取单个sheet的数据
-    private Map<Integer, List<Object>> getSingleSheetData(Sheet sheet, int rowIndex, int colIndex) {
+    public static Map<Integer, List<Object>> getSingleSheetData(Sheet sheet, int rowIndex, int colIndex) {
         //存储行列表
         Map<Integer, List<Object>> cellsMap = new HashMap<>();
         for (int i = rowIndex; i <= sheet.getLastRowNum(); i++) {
@@ -27,18 +27,18 @@ public abstract class ImportUtils {
     }
 
     // 存储每一行的单元格
-    private List<Object> getCells(Row row, int colIndex) {
+    private static List<Object> getCells(Row row, int colIndex) {
         List<Object> cells = new ArrayList<>();//每一列的单元格数据
         for (int j = colIndex; j < row.getLastCellNum(); j++) {
             if (row.getCell(j) != null){
-                cells.add(this.getCellValue(row.getCell(j)));
+                cells.add(getCellValue(row.getCell(j)));
             }
         }
         return cells;
     }
 
     // 获取单元格数据
-    private Object getCellValue(Cell cell) {
+    private static Object getCellValue(Cell cell) {
         Object value = null;
         int cellType = cell.getCellType();
         switch (cellType) {

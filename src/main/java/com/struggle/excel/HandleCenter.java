@@ -1,9 +1,17 @@
 package com.struggle.excel;
 
 import com.struggle.excel.model.TableData;
+import com.struggle.excel.util.ImportUtils;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,7 +27,16 @@ public class HandleCenter {
 
     private Connection conn = null;
 
-    public HandleCenter(){
+    private Workbook workbook;
+
+    public HandleCenter(InputStream stream) {
+        try {
+            workbook = WorkbookFactory.create(stream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidFormatException e) {
+            e.printStackTrace();
+        }
         this.getConnection();
     }
 
@@ -74,7 +91,7 @@ public class HandleCenter {
                 conn = null;
             }
 
-        }catch(Exception e){
+        } catch(Exception e){
             e.printStackTrace();
         }
     }
@@ -87,13 +104,27 @@ public class HandleCenter {
         // 线程
         map.forEach((key, value) -> {
             // 1.根据key获取sheet表格数据
+            Sheet sheet = workbook.getSheet(key);
+            Map<Integer, List<Object>> sheetData = ImportUtils.getSingleSheetData(sheet, 0, 0);
+
             // 2.根据value拼接insert语句
+            StringBuilder builder = new StringBuilder();
+            builder.append("INSERT INTO ").append(value.getName()).append(" (").append(") ").append("values")
+
+
             // 3.根据字段类型，字段值设置setInt,setString
+            // 遍历每一行
+            sheetData.forEach((skey, svalue) -> {
+                // 遍历每一个字段
+                for (Object o : svalue) {
+
+                }
+            });
         });
     }
 
     public static void main(String[] args) {
-        HandleCenter oracleDao = new HandleCenter();
+        HandleCenter oracleDao = new HandleCenter(null);
         oracleDao.getRes();
     }
 }
