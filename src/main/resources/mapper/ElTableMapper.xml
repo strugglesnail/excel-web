@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.struggle.excel.mapper.ElTableMapper">
+  <resultMap id="BaseResultMap" type="com.struggle.excel.model.ElTable">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+  </resultMap>
+  <sql id="el_tableColumns">
+    id, name
+  </sql>
+  <sql id="el_tableDynamicWhere">
+    <where>
+      <if test="null != id and '' !=  id">AND id = #{ id}</if>
+      <if test="null != name and '' !=  name">AND name = #{ name}</if>
+	</where>
+  </sql>
+  <sql id="el_tableDynamicLikeWhere">
+    <where>
+      <if test="null != id and '' !=  id">AND id LIKE #{ id}</if>
+      <if test="null != name and '' !=  name">AND name LIKE #{ name}</if>
+	</where>
+  </sql>
+  <select id="listPage" parameterType="com.struggle.excel.model.ElTable" resultMap="BaseResultMap">
+    SELECT <include refid="el_tableColumns" /> FROM  `el_table` <include refid="el_tableDynamicWhere" />
+  </select>
+  <select id="listLikePage" parameterType="com.struggle.excel.model.ElTable" resultMap="BaseResultMap">
+     <include refid="el_tableDynamicLikeWhere" />
+  </select>
+  <select id="list" parameterType="com.struggle.excel.model.ElTable" resultMap="BaseResultMap">
+    SELECT <include refid="el_tableColumns" /> FROM  `el_table` <include refid="el_tableDynamicWhere" />
+  </select>
+  <select id="getById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+     <include refid="el_tableDynamicWhere" /> WHERE id = #{id}
+  </select>
+  <select id="getOne" parameterType="com.struggle.excel.model.ElTable" resultMap="BaseResultMap">
+    SELECT <include refid="el_tableColumns" /> FROM  `el_table` <include refid="el_tableDynamicWhere" /> LIMIT 1
+  </select>
+  <select id="count" parameterType="com.struggle.excel.model.ElTable" resultType="java.lang.Long">
+    SELECT COUNT(1) FROM `el_table` <include refid="el_tableDynamicWhere" />
+  </select>
+  <select id="countLike" parameterType="com.struggle.excel.model.ElTable" resultType="java.lang.Long">
+     <include refid="el_tableDynamicLikeWhere" />
+  </select>
+  <sql id="save_el_table_columns">
+    INSERT INTO `el_table`(
+		name
+	) VALUES
+  </sql>
+  <sql id="save_el_table_values">
+    (
+	  #{ name, jdbcType=VARCHAR}
+	)
+  </sql>
+  <sql id="batch_save_el_table_values">
+    (
+	  #{ item.name, jdbcType=VARCHAR}
+	)
+  </sql>
+  <insert id="save" keyProperty="id" parameterType="com.struggle.excel.model.ElTable" useGeneratedKeys="true">
+    <include refid="save_el_table_columns" /><include refid="save_el_table_values" />
+  </insert>
+  <insert id="saveBatch" parameterType="list">
+    <include refid="save_el_table_columns"/>
+	<foreach collection="list" index="index" item="item" separator=",">
+		<include refid="batch_save_el_table_values"/>
+	</foreach>
+  </insert>
+  <sql id="el_tableUpdate">
+    UPDATE `el_table` 
+	<set> 
+      <if test="null != name">name = #{ name, jdbcType=VARCHAR }</if>
+	</set>
+	WHERE id = #{id}
+  </sql>
+  <sql id="el_tableUpdateBatch">
+    UPDATE `el_table` 
+	<set> 
+      <if test="null != item.name">name = #{ item.name, jdbcType=VARCHAR }</if>
+	</set>
+	WHERE id = #{ item.id }
+  </sql>
+  <update id="update" parameterType="com.struggle.excel.model.ElTable">
+    <include refid="el_tableUpdate" />
+  </update>
+  <update id="updateBatch" parameterType="list">
+    <foreach collection="list" index="index" item="item" open="" separator=";" close="">
+	  	<include refid="el_tableUpdateBatch" />
+	</foreach>
+  </update>
+  <delete id="delete">
+    DELETE FROM `el_table` WHERE id = #{id}
+  </delete>
+</mapper>
