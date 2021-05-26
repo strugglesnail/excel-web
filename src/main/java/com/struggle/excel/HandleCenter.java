@@ -84,11 +84,11 @@ public class HandleCenter {
         Map<String, TableData> map = new HashMap<>();
         map.put("sheet1", new TableData());
         map.put("sheet2", new TableData());
-
+        // 线程
         map.forEach((key, value) -> {
             // 1.根据key获取sheet表格数据
             // 2.根据value拼接insert语句
-            // 3.根据字段类型，字段值
+            // 3.根据字段类型，字段值设置setInt,setString
         });
     }
 
