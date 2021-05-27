@@ -5,7 +5,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="index" jdbcType="INTEGER" property="index" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
   </resultMap>
   <sql id="el_fieldColumns">
     id, index, name, type
@@ -56,14 +56,14 @@
     (
 	  #{ index, jdbcType=INTEGER},
 	  #{ name, jdbcType=VARCHAR},
-	  #{ type, jdbcType=INTEGER}
+	  #{ type, jdbcType=VARCHAR}
 	)
   </sql>
   <sql id="batch_save_el_field_values">
     (
 	  #{ item.index, jdbcType=INTEGER},
 	  #{ item.name, jdbcType=VARCHAR},
-	  #{ item.type, jdbcType=INTEGER}
+	  #{ item.type, jdbcType=VARCHAR}
 	)
   </sql>
   <insert id="save" keyProperty="id" parameterType="com.struggle.excel.model.ElField" useGeneratedKeys="true">
@@ -80,7 +80,7 @@
 	<set> 
       <if test="null != index">index = #{ index, jdbcType=INTEGER },</if>
       <if test="null != name">name = #{ name, jdbcType=VARCHAR },</if>
-      <if test="null != type">type = #{ type, jdbcType=INTEGER }</if>
+      <if test="null != type">type = #{ type, jdbcType=VARCHAR }</if>
 	</set>
 	WHERE id = #{id}
   </sql>
@@ -89,7 +89,7 @@
 	<set> 
       <if test="null != item.index">index = #{ item.index, jdbcType=INTEGER },</if>
       <if test="null != item.name">name = #{ item.name, jdbcType=VARCHAR },</if>
-      <if test="null != item.type">type = #{ item.type, jdbcType=INTEGER }</if>
+      <if test="null != item.type">type = #{ item.type, jdbcType=VARCHAR }</if>
 	</set>
 	WHERE id = #{ item.id }
   </sql>

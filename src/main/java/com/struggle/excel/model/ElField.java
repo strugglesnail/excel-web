@@ -11,7 +11,17 @@ public class ElField {
     private String name;
 
     //字段类型
-    private Integer type;
+    private String type;
+
+    public ElField() {
+    }
+
+    public ElField(Long id, Integer index, String name, String type) {
+        this.id = id;
+        this.index = index;
+        this.name = name;
+        this.type = type;
+    }
 
     /**
      * 获取主键Id
@@ -72,7 +82,7 @@ public class ElField {
      *
      * @return type - 字段类型
      */
-    public Integer getType() {
+    public String getType() {
         return type;
     }
 
@@ -81,7 +91,7 @@ public class ElField {
      *
      * @param type 字段类型
      */
-    public void setType(Integer type) {
+    public void setType(String type) {
         this.type = type;
     }
 }
