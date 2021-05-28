@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public interface DataType<T> {
 
     // 类型
-    String type();
+    String[] type();
 
     void setDataType(PreparedStatement statement, int index, T t)  throws SQLException;
 }

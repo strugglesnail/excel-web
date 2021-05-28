@@ -1,5 +1,6 @@
 package com.struggle.excel.dataType;
 
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -8,14 +9,17 @@ import java.sql.SQLException;
  * @date 2021/5/27
  * @desc
  */
-public class DoubleDataType implements DataType<Long> {
-    @Override
-    public String type() {
-        return "bigint";
-    }
+public class DoubleDataType implements DataType<Double> {
 
     @Override
-    public void setDataType(PreparedStatement statement, int index, Long aLong) throws SQLException {
-        statement.setLong(index, aLong);
+    public String[] type() {
+        return new String[] { "double", "number" };
+    }
+
+
+
+    @Override
+    public void setDataType(PreparedStatement statement, int index, Double val) throws SQLException {
+        statement.setDouble(index, val);
     }
 }

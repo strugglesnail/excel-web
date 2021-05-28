@@ -1,7 +1,9 @@
 package com.struggle.excel;
 
+import com.struggle.excel.dataType.*;
 import com.struggle.excel.model.ElField;
 import com.struggle.excel.model.TableData;
+import com.struggle.excel.util.ConnectionUtils;
 import com.struggle.excel.util.ImportUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -11,7 +13,6 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import java.io.*;
 import java.sql.*;
-import java.sql.Date;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,9 +23,16 @@ import java.util.stream.Collectors;
  */
 public class HandleCenter {
 
-    private Connection conn = null;
+    private Connection conn;
 
     private Workbook workbook;
+
+    List<DataType> dataTypeList = new ArrayList<>();
+
+    public HandleCenter() {
+        // 获取连接
+        conn = ConnectionUtils.getConnection();
+    }
 
     public HandleCenter(InputStream stream) {
         try {
@@ -34,64 +42,65 @@ public class HandleCenter {
         } catch (InvalidFormatException e) {
             e.printStackTrace();
         }
-        this.getConnection();
+        // 获取连接
+        conn = ConnectionUtils.getConnection();
+        // 初始化数据类型
+        dataTypeList.add(new LongDataType());
+        dataTypeList.add(new DoubleDataType());
+        dataTypeList.add(new StringDataType());
+        dataTypeList.add(new DateDataType());
     }
 
-    public void getConnection(){
-        try{
-//            Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();
-//            String url="jdbc:oracle:thin:@10.11.0.31:1521:orcl"; //orcl为数据库的SID
-//            String user="meeting";
-//            String password="meeting";
-            String Driver="com.mysql.jdbc.Driver";    //驱动程序
-            String url="jdbc:mysql://localhost:3306/excel?useSSL=false";    //连接的URL,db_name为数据库名
-            String username="root";    //用户名
-            String password="123456";    //密码
-            Class.forName(Driver).newInstance();
-            conn = DriverManager.getConnection(url, username, password);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
+    // 获取指定库的表名称
     public List<String> getTableList(String baseName) {
         List<String> tableList = new ArrayList<>();
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        PreparedStatement ps;
+        ResultSet rs;
         try {
             ps = conn.prepareStatement("SELECT table_name FROM information_schema.tables WHERE table_schema = ? AND table_type='base table'");
             ps.setString(1, baseName);
             rs = ps.executeQuery();
             while (rs.next()) {
                 String string = rs.getString(1);
-                System.out.println(string);
                 tableList.add(string);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        this.close(conn, ps, rs);
+//        ConnectionUtils.close(conn, ps, rs);
         return tableList;
     }
 
-    public void close(Connection conn , Statement stmt, ResultSet rs){
-        try{
-            if(stmt != null){
-                stmt.close();
-                stmt = null ;
+    // 获取指定库的表名称
+    public List<Map<String, String>> getColumnList(String baseName, String tableName) {
+        List<Map<String, String>> tableList = new ArrayList<>();
+        PreparedStatement ps;
+        ResultSet rs;
+        try {
+            ps = conn.prepareStatement("SELECT column_name, data_type FROM information_schema.columns WHERE table_schema=? AND table_name=?");
+            ps.setString(1, baseName);
+            ps.setString(2, tableName);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Map<String, String> map = new HashMap<>(2);
+                String columnName = rs.getString(1);
+                String dataType = rs.getString(2);
+                map.put("columnName", columnName);
+                map.put("dataType", dataType);
+                tableList.add(map);
             }
-            if(conn != null){
-                conn.close();
-                conn = null;
-            }
-
-        } catch(Exception e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+//        ConnectionUtils.close(conn, ps, rs);
+        return tableList;
     }
 
 
-    private void demo(Map<String, TableData> map) throws Exception {
+
+
+    private void core(Map<String, TableData> map) throws Exception {
         // 线程
         StringBuilder builder = new StringBuilder();
         PreparedStatement statement = null;
@@ -135,19 +144,12 @@ public class HandleCenter {
                 // 遍历每一行，填充字段值
                 for (int i = 0; i < fieldList.size(); i++) {
                     ElField field = fieldList.get(i);
-                    switch (field.getType()) {
-                        case "1":
-                        statement.setLong(i + 1, (Long) svalue.get(field.getIndex() - 1));
-                        break;
-                        case "2":
-                        statement.setDouble(i + 1, (Double) svalue.get(field.getIndex() - 1));
-                        break;
-                        case "3":
-                        statement.setString(i + 1, (String) svalue.get(field.getIndex() - 1));
-                        break;
-                        case "4":
-                        statement.setDate(i + 1, (Date) svalue.get(field.getIndex() - 1));
-                        break;
+                    for (DataType dataType : dataTypeList) {
+                        boolean anyMatch = Arrays.stream(dataType.type()).anyMatch(t -> t.equals(field.getType()));
+                        if (anyMatch) {
+                            dataType.setDataType(statement, i+ 1, svalue.get(field.getIndex() - 1));
+                            break;
+                        }
                     }
                 }
                 statement.addBatch();
@@ -163,7 +165,7 @@ public class HandleCenter {
             statement.clearBatch();
         }
         // 关闭连接
-        this.close(conn, statement, null);
+        ConnectionUtils.close(conn, statement, null);
     }
 
     // 字段排序
@@ -193,6 +195,7 @@ public class HandleCenter {
         InputStream stream = new FileInputStream(new File("C:\\Users\\user\\Desktop\\excel-web.xlsx"));
         HandleCenter center = new HandleCenter(stream);
 //        center.demo(map);
-        System.out.println(center.getTableList("excel"));
+//        System.out.println(center.getTableList("excel"));
+        System.out.println(center.getColumnList("excel" , "person"));
     }
 }
