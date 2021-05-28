@@ -3,6 +3,7 @@ package com.struggle.excel;
 import com.struggle.excel.dataType.*;
 import com.struggle.excel.model.ElField;
 import com.struggle.excel.model.TableData;
+import com.struggle.excel.model.TableNode;
 import com.struggle.excel.util.ConnectionUtils;
 import com.struggle.excel.util.ImportUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -53,8 +54,8 @@ public class HandleCenter {
 
 
     // 获取指定库的表名称
-    public List<String> getTableList(String baseName) {
-        List<String> tableList = new ArrayList<>();
+    public List<TableNode> getTableList(String baseName) {
+        List<TableNode> tableList = new ArrayList<>();
         PreparedStatement ps;
         ResultSet rs;
         try {
@@ -62,8 +63,13 @@ public class HandleCenter {
             ps.setString(1, baseName);
             rs = ps.executeQuery();
             while (rs.next()) {
-                String string = rs.getString(1);
-                tableList.add(string);
+                TableNode node = new TableNode();
+                String tableName = rs.getString(1);
+                List<TableNode> columnList = getColumnList(baseName, tableName, rs.getRow());
+                node.setId(rs.getRow() + "");
+                node.setLabel(tableName);
+                node.setChildren(columnList);
+                tableList.add(node);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -73,8 +79,8 @@ public class HandleCenter {
     }
 
     // 获取指定库的表名称
-    public List<Map<String, String>> getColumnList(String baseName, String tableName) {
-        List<Map<String, String>> tableList = new ArrayList<>();
+    public List<TableNode> getColumnList(String baseName, String tableName, int row) {
+        List<TableNode> tableList = new ArrayList<>();
         PreparedStatement ps;
         ResultSet rs;
         try {
@@ -83,12 +89,12 @@ public class HandleCenter {
             ps.setString(2, tableName);
             rs = ps.executeQuery();
             while (rs.next()) {
-                Map<String, String> map = new HashMap<>(2);
+                TableNode node = new TableNode();
                 String columnName = rs.getString(1);
                 String dataType = rs.getString(2);
-                map.put("columnName", columnName);
-                map.put("dataType", dataType);
-                tableList.add(map);
+                node.setId(row + "-" + rs.getRow());
+                node.setLabel(columnName);
+                tableList.add(node);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -196,6 +202,6 @@ public class HandleCenter {
         HandleCenter center = new HandleCenter(stream);
 //        center.demo(map);
 //        System.out.println(center.getTableList("excel"));
-        System.out.println(center.getColumnList("excel" , "person"));
+//        System.out.println(center.getColumnList("excel" , "person"));
     }
 }
