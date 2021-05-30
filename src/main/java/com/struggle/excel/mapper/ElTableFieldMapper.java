@@ -2,9 +2,10 @@ package com.struggle.excel.mapper;
 
 import com.struggle.excel.model.ElTableField;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+@Repository
 public interface ElTableFieldMapper {
     List<ElTableField> listPage(ElTableField elTableField, RowBounds rowBounds);
 

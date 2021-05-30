@@ -19,10 +19,10 @@ import java.util.Map;
 public class ExcelController {
 
     @GetMapping("/getTableList")
-    public List<TableNode> getTableList(@RequestParam(defaultValue = "excel", required = false) String baseName) {
+    public ServerResponse getTableList(@RequestParam(defaultValue = "excel", required = false) String baseName) {
         HandleCenter center = new HandleCenter();
         List<TableNode> tableList = center.getTableList(baseName);
-        return tableList;
+        return ServerResponse.createBySuccess(tableList);
     }
 
     @PostMapping("/addFields")
