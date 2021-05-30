@@ -1,11 +1,10 @@
 package com.struggle.excel.controller;
 
 import com.struggle.excel.HandleCenter;
+import com.struggle.excel.common.ServerResponse;
+import com.struggle.excel.model.TableData;
 import com.struggle.excel.model.TableNode;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -26,10 +25,10 @@ public class ExcelController {
         return tableList;
     }
 
-//    @GetMapping("/getColumnList")
-//    public Object getColumnList(@RequestParam(defaultValue = "excel", required = false) String baseName, @RequestParam(defaultValue = "person", required = false) String tableName) {
+    @PostMapping("/addFields")
+    public ServerResponse getColumnList(@RequestBody TableData tableData) {
 //        HandleCenter center = new HandleCenter();
 //        List<Map<String, String>> tableList = center.getColumnList(baseName, tableName);
-//        return tableList;
-//    }
+        return ServerResponse.createBySuccess();
+    }
 }

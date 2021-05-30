@@ -11,8 +11,11 @@ import java.util.List;
  */
 public class TableNode {
 
-    private String label;
     private String id;
+    private String label;
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private String type;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<TableNode> children;
@@ -25,6 +28,14 @@ public class TableNode {
         this.label = label;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public List<TableNode> getChildren() {
         return children;
     }
@@ -33,11 +44,11 @@ public class TableNode {
         this.children = children;
     }
 
-    public String getId() {
-        return id;
+    public String getType() {
+        return type;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setType(String type) {
+        this.type = type;
     }
 }

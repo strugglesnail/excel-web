@@ -94,6 +94,7 @@ public class HandleCenter {
                 String dataType = rs.getString(2);
                 node.setId(row + "-" + rs.getRow());
                 node.setLabel(columnName);
+                node.setType(dataType);
                 tableList.add(node);
             }
         } catch (SQLException e) {
