@@ -3,6 +3,7 @@ package com.struggle.excel.controller;
 import com.struggle.excel.HandleCenter;
 import com.struggle.excel.common.ServerResponse;
 import com.struggle.excel.model.TableData;
+import com.struggle.excel.model.TableFieldData;
 import com.struggle.excel.model.TableNode;
 import com.struggle.excel.service.ExcelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,12 @@ public class ExcelController {
         HandleCenter center = new HandleCenter();
         List<TableNode> tableList = center.getTableList(baseName);
         return ServerResponse.createBySuccess(tableList);
+    }
+
+    @GetMapping("/getFields")
+    public ServerResponse getColumnList() {
+        List<TableFieldData> fields = excelService.getFields();
+        return ServerResponse.createBySuccess(fields);
     }
 
     @PostMapping("/addFields")

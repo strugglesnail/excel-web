@@ -1,6 +1,7 @@
 package com.struggle.excel.mapper;
 
 import com.struggle.excel.model.ElField;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Repository;
 
@@ -30,4 +31,7 @@ public interface ElFieldMapper {
     void updateBatch(List<ElField> list);
 
     void delete(Long id);
+
+    // 获取字段列表
+    List<ElField> getFields(@Param("fields") String fields);
 }

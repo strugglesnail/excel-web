@@ -6,7 +6,7 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
   </resultMap>
   <sql id="el_tableColumns">
-    id, name
+    id, `name`
   </sql>
   <sql id="el_tableDynamicWhere">
     <where>
@@ -30,7 +30,7 @@
     SELECT <include refid="el_tableColumns" /> FROM  `el_table` <include refid="el_tableDynamicWhere" />
   </select>
   <select id="getById" parameterType="java.lang.Long" resultMap="BaseResultMap">
-     <include refid="el_tableDynamicWhere" /> WHERE id = #{id}
+      SELECT <include refid="el_tableColumns" /> FROM  `el_table` WHERE id = #{id}
   </select>
   <select id="getOne" parameterType="com.struggle.excel.model.ElTable" resultMap="BaseResultMap">
     SELECT <include refid="el_tableColumns" /> FROM  `el_table` <include refid="el_tableDynamicWhere" /> LIMIT 1

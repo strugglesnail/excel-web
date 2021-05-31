@@ -3,13 +3,13 @@ package com.struggle.excel.service;
 import com.struggle.excel.mapper.ElFieldMapper;
 import com.struggle.excel.mapper.ElTableFieldMapper;
 import com.struggle.excel.mapper.ElTableMapper;
-import com.struggle.excel.model.ElTable;
-import com.struggle.excel.model.ElTableField;
-import com.struggle.excel.model.TableData;
+import com.struggle.excel.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -44,5 +44,20 @@ public class ExcelService {
         tf.setTabId(table.getId());
         tf.setFieldIds(fieldIds);
         tableFieldMapper.save(tf);
+    }
+
+    public List<TableFieldData> getFields() {
+        List<ElTableField> list = tableFieldMapper.list(new ElTableField());
+        List<TableFieldData> tableFieldDataList = new ArrayList<>();
+        for (ElTableField tableField : list) {
+            System.out.println(tableField.getId());
+            ElTable table = tableMapper.getById(tableField.getId());
+            List<ElField> fields = fieldMapper.getFields(tableField.getFieldIds());
+            TableFieldData tableFieldData = new TableFieldData();
+            tableFieldData.setTableName(table.getName());
+            tableFieldData.setFieldNames(fields.stream().map(f -> f.getName() + "(" + f.getType() +")").collect(Collectors.joining(",")));
+            tableFieldDataList.add(tableFieldData);
+        }
+        return tableFieldDataList;
     }
 }
