@@ -4,6 +4,8 @@ import com.struggle.excel.HandleCenter;
 import com.struggle.excel.common.ServerResponse;
 import com.struggle.excel.model.TableData;
 import com.struggle.excel.model.TableNode;
+import com.struggle.excel.service.ExcelService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +20,9 @@ import java.util.Map;
 @RequestMapping("/excel")
 public class ExcelController {
 
+    @Autowired
+    private ExcelService excelService;
+
     @GetMapping("/getTableList")
     public ServerResponse getTableList(@RequestParam(defaultValue = "excel", required = false) String baseName) {
         HandleCenter center = new HandleCenter();
@@ -27,8 +32,7 @@ public class ExcelController {
 
     @PostMapping("/addFields")
     public ServerResponse getColumnList(@RequestBody TableData tableData) {
-//        HandleCenter center = new HandleCenter();
-//        List<Map<String, String>> tableList = center.getColumnList(baseName, tableName);
+        excelService.addFields(tableData);
         return ServerResponse.createBySuccess();
     }
 }

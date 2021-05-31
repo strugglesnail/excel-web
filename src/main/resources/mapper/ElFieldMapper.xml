@@ -8,7 +8,7 @@
     <result column="type" jdbcType="VARCHAR" property="type" />
   </resultMap>
   <sql id="el_fieldColumns">
-    id, index, name, type
+    `id`, `index`, `name`, `type`
   </sql>
   <sql id="el_fieldDynamicWhere">
     <where>
@@ -49,7 +49,7 @@
   </select>
   <sql id="save_el_field_columns">
     INSERT INTO `el_field`(
-		index, name, type
+		`index`, `name`, `type`
 	) VALUES
   </sql>
   <sql id="save_el_field_values">
@@ -69,7 +69,7 @@
   <insert id="save" keyProperty="id" parameterType="com.struggle.excel.model.ElField" useGeneratedKeys="true">
     <include refid="save_el_field_columns" /><include refid="save_el_field_values" />
   </insert>
-  <insert id="saveBatch" parameterType="list">
+  <insert id="saveBatch" parameterType="list" keyProperty="id" useGeneratedKeys="true" >
     <include refid="save_el_field_columns"/>
 	<foreach collection="list" index="index" item="item" separator=",">
 		<include refid="batch_save_el_field_values"/>

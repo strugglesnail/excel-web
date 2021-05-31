@@ -4,9 +4,13 @@ import com.struggle.excel.mapper.ElFieldMapper;
 import com.struggle.excel.mapper.ElTableFieldMapper;
 import com.struggle.excel.mapper.ElTableMapper;
 import com.struggle.excel.model.ElTable;
+import com.struggle.excel.model.ElTableField;
 import com.struggle.excel.model.TableData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.stream.Collectors;
 
 /**
  * @auther strugglesnail
@@ -24,6 +28,7 @@ public class ExcelService {
     private ElTableFieldMapper tableFieldMapper;
 
     // 保存表信息
+    @Transactional
     public void addFields(TableData data) {
         // 保存表信息
         ElTable table = new ElTable();
@@ -34,7 +39,10 @@ public class ExcelService {
         fieldMapper.saveBatch(data.getFields());
 
         // 保存表与字段关系信息
-        tableFieldMapper
-
+        String fieldIds = data.getFields().stream().map(f -> String.valueOf(f.getId())).collect(Collectors.joining(","));
+        ElTableField tf = new ElTableField();
+        tf.setTabId(table.getId());
+        tf.setFieldIds(fieldIds);
+        tableFieldMapper.save(tf);
     }
 }
