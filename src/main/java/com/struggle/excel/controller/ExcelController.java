@@ -6,7 +6,6 @@ import com.struggle.excel.model.TableData;
 import com.struggle.excel.model.TableFieldData;
 import com.struggle.excel.model.TableNode;
 import com.struggle.excel.service.ExcelService;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -15,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author strugglesnail
@@ -53,13 +52,15 @@ public class ExcelController {
         if (file == null || file.isEmpty()) {
             return ServerResponse.createByErrorMessage("文件不能为空");
         }
+
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
         int numberOfSheets = workbook.getNumberOfSheets();
+        List<String> sheetNameList = new ArrayList<>(numberOfSheets);
         for (int i = 0; i < numberOfSheets; i++) {
             Sheet sheetAt = workbook.getSheetAt(i);
-            System.out.println(sheetAt.getSheetName());
+            sheetNameList.add(sheetAt.getSheetName());
         }
-        return ServerResponse.createBySuccess();
+        return ServerResponse.createBySuccess(sheetNameList);
     }
 
     public static void main(String[] args) throws Exception {
