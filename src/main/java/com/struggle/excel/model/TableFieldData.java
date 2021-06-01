@@ -1,5 +1,7 @@
 package com.struggle.excel.model;
 
+import java.util.List;
+
 /**
  * @auther strugglesnail
  * @date 2021/5/31 22:33
@@ -10,6 +12,8 @@ public class TableFieldData {
     private String tableName;
 
     private String fieldNames;
+
+    private List<ElField> fieldList;
 
     public String getTableName() {
         return tableName;
@@ -25,5 +29,13 @@ public class TableFieldData {
 
     public void setFieldNames(String fieldNames) {
         this.fieldNames = fieldNames;
+    }
+
+    public List<ElField> getFieldList() {
+        return fieldList;
+    }
+
+    public void setFieldList(List<ElField> fieldList) {
+        this.fieldList = fieldList;
     }
 }

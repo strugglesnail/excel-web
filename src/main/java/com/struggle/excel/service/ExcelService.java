@@ -56,6 +56,7 @@ public class ExcelService {
             TableFieldData tableFieldData = new TableFieldData();
             tableFieldData.setTableName(table.getName());
             tableFieldData.setFieldNames(fields.stream().map(f -> f.getName() + "(" + f.getType() +")").collect(Collectors.joining(",")));
+            tableFieldData.setFieldList(fields);
             tableFieldDataList.add(tableFieldData);
         }
         return tableFieldDataList;

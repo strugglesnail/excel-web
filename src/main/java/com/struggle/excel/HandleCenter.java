@@ -185,9 +185,9 @@ public class HandleCenter {
         TableData tableData = new TableData();
         List<ElField> fields0 = new ArrayList<>();
         tableData.setName("person");
-        fields0.add(new ElField(1L, 1, "name", ""));
-        fields0.add(new ElField(2L, 2, "age", ""));
-        fields0.add(new ElField(3L, 3, "sex", ""));
+        fields0.add(new ElField(1L, 1, "name", "varchar"));
+        fields0.add(new ElField(2L, 2, "age", "int"));
+        fields0.add(new ElField(3L, 3, "sex", "varchar"));
         tableData.setFields(fields0);
 //        TableData tableData2 = new TableData();
 //        List<ElField> fields2 = new ArrayList<>();
