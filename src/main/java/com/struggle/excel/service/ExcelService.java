@@ -32,7 +32,7 @@ public class ExcelService {
     public void addFields(TableData data) {
         // 保存表信息
         ElTable table = new ElTable();
-        table.setName(data.getName());
+        table.setName(data.getTableName());
         tableMapper.save(table);
 
         // 保存字段信息
@@ -50,7 +50,6 @@ public class ExcelService {
         List<ElTableField> list = tableFieldMapper.list(new ElTableField());
         List<TableFieldData> tableFieldDataList = new ArrayList<>();
         for (ElTableField tableField : list) {
-            System.out.println(tableField.getId());
             ElTable table = tableMapper.getById(tableField.getId());
             List<ElField> fields = fieldMapper.getFields(tableField.getFieldIds());
             TableFieldData tableFieldData = new TableFieldData();

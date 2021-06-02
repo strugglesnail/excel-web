@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class TableData {
     private Long id;
-    private String name;
+    private String tableName;
     List<ElField> fields;
 
     public Long getId() {
@@ -20,12 +20,12 @@ public class TableData {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTableName() {
+        return tableName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 
     public List<ElField> getFields() {

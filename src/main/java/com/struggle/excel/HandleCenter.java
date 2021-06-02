@@ -129,7 +129,7 @@ public class HandleCenter {
                 placeholders = value.getFields().stream().map(f -> "?").collect(Collectors.joining(","));
             }
 
-            builder.append("INSERT INTO ").append(value.getName()).append("(").append(fields).append(") ")
+            builder.append("INSERT INTO ").append(value.getTableName()).append("(").append(fields).append(") ")
                     .append("values (").append(placeholders).append(")");
 
             String sql = builder.toString();
@@ -184,7 +184,7 @@ public class HandleCenter {
         Map<String, TableData> map = new HashMap<>();
         TableData tableData = new TableData();
         List<ElField> fields0 = new ArrayList<>();
-        tableData.setName("person");
+        tableData.setTableName("person");
         fields0.add(new ElField(1L, 1, "name", "varchar"));
         fields0.add(new ElField(2L, 2, "age", "int"));
         fields0.add(new ElField(3L, 3, "sex", "varchar"));
