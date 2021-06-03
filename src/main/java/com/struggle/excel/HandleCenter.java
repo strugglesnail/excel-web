@@ -52,6 +52,17 @@ public class HandleCenter {
         dataTypeList.add(new DateDataType());
     }
 
+    public HandleCenter(Workbook workbook) {
+        this.workbook = workbook;
+        // 获取连接
+        conn = ConnectionUtils.getConnection();
+        // 初始化数据类型
+        dataTypeList.add(new LongDataType());
+        dataTypeList.add(new DoubleDataType());
+        dataTypeList.add(new StringDataType());
+        dataTypeList.add(new DateDataType());
+    }
+
 
     // 获取指定库的表名称
     public List<TableNode> getTableList(String baseName) {
@@ -107,7 +118,7 @@ public class HandleCenter {
 
 
 
-    private void core(Map<String, TableData> map) throws Exception {
+    public void core(Map<String, TableData> map) throws Exception {
         // 线程
         StringBuilder builder = new StringBuilder();
         PreparedStatement statement = null;
@@ -132,8 +143,8 @@ public class HandleCenter {
             builder.append("INSERT INTO ").append(value.getTableName()).append("(").append(fields).append(") ")
                     .append("values (").append(placeholders).append(")");
 
+            // 插入SQL
             String sql = builder.toString();
-            System.out.println(sql);
             statement = conn.prepareStatement(sql);
 
             // 2.根据key获取sheet表格数据
@@ -141,38 +152,54 @@ public class HandleCenter {
             Map<Integer, List<Object>> sheetData = ImportUtils.getSingleSheetData(sheet, 1, 0);
 
             // 3.根据字段类型，字段值设置setInt,setString
-            for (Map.Entry<Integer, List<Object>> e : sheetData.entrySet()) {
-                Integer row = e.getKey();
-                // 每行的单元格
-                List<Object> svalue = e.getValue();
-                System.out.println(svalue);
-                System.out.println(fieldList.stream().map(d -> d.getName()).collect(Collectors.joining(",")));
+            this.mappingSheetDataToField(statement, fieldList, sheetData);
 
-                // 遍历每一行，填充字段值
-                for (int i = 0; i < fieldList.size(); i++) {
-                    ElField field = fieldList.get(i);
-                    for (DataType dataType : dataTypeList) {
-                        boolean anyMatch = Arrays.stream(dataType.type()).anyMatch(t -> t.equals(field.getType()));
-                        if (anyMatch) {
-                            dataType.setDataType(statement, i+ 1, svalue.get(field.getIndex() - 1));
-                            break;
-                        }
-                    }
-                }
-                statement.addBatch();
-                // 每隔50条提交一次
-                if (row != 0 && row % 50 == 0) {
-                    statement.executeBatch();
-                    conn.commit();
-                    statement.clearBatch();
-                }
-            }
+            // 执行批量
             statement.executeBatch();
             conn.commit();
             statement.clearBatch();
         }
         // 关闭连接
         ConnectionUtils.close(conn, statement, null);
+    }
+
+    private void mappingSheetDataToField(PreparedStatement statement, List<ElField> fieldList, Map<Integer, List<Object>> sheetData) throws SQLException {
+        for (Map.Entry<Integer, List<Object>> e : sheetData.entrySet()) {
+            Integer row = e.getKey();
+            // 每行的单元格
+            List<Object> svalue = e.getValue();
+
+            // 遍历每一行，填充字段值
+            this.fillRow(statement, fieldList, svalue);
+
+            // 批量操作
+            statement.addBatch();
+
+            // 每隔50条提交一次
+            if (row != 0 && row % 50 == 0) {
+                statement.executeBatch();
+                conn.commit();
+                statement.clearBatch();
+            }
+        }
+    }
+
+    private void fillRow(PreparedStatement statement, List<ElField> fieldList, List<Object> svalue) throws SQLException {
+        for (int i = 0; i < fieldList.size(); i++) {
+            ElField field = fieldList.get(i);
+            this.fillField(statement, svalue, i, field);
+        }
+    }
+
+    // 填充字段
+    private void fillField(PreparedStatement statement, List<Object> svalue, int i, ElField field) throws SQLException {
+        for (DataType dataType : dataTypeList) {
+            boolean anyMatch = Arrays.stream(dataType.type()).anyMatch(t -> t.equals(field.getType()));
+            if (anyMatch) {
+                dataType.setDataType(statement, i+ 1, svalue.get(field.getIndex() - 1));
+                break;
+            }
+        }
     }
 
     // 字段排序

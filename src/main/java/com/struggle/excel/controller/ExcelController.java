@@ -72,7 +72,7 @@ public class ExcelController {
         return ServerResponse.createBySuccess(sheetNameList);
     }
     @PostMapping("/addExcelData")
-    public ServerResponse addExcelData(@RequestBody List<ExcelData> excelData) {
+    public ServerResponse addExcelData(@RequestBody List<ExcelData> excelData) throws Exception {
 
         if (!cacheWorkbook.containsKey(WORK_BOOK_KEY)) {
             return ServerResponse.createByErrorMessage("找不到Excel源文件");
@@ -82,6 +82,8 @@ public class ExcelController {
             sheetMap.put(excelDatum.getSheetName(), excelDatum.getTableData());
         }
         Workbook workbook = cacheWorkbook.get(WORK_BOOK_KEY);
+        HandleCenter center = new HandleCenter(workbook);
+        center.core(sheetMap);
         return ServerResponse.createBySuccess(excelData);
     }
 

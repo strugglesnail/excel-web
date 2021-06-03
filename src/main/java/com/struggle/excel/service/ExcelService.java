@@ -33,7 +33,10 @@ public class ExcelService {
         // 保存表信息
         ElTable table = new ElTable();
         table.setName(data.getTableName());
-        tableMapper.save(table);
+        ElTable existTab = tableMapper.getOne(table);
+        if (existTab == null) {
+            tableMapper.save(table);
+        }
 
         // 保存字段信息
         fieldMapper.saveBatch(data.getFields());
