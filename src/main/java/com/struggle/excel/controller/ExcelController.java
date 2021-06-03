@@ -51,8 +51,8 @@ public class ExcelController {
     }
 
     @PostMapping("/addFields")
-    public ServerResponse getColumnList(@RequestBody TableData tableData) {
-        excelService.addFields(tableData);
+    public ServerResponse getColumnList(@RequestBody List<TableData> tableDatas) {
+        excelService.addFields(tableDatas);
         return ServerResponse.createBySuccess();
     }
     @PostMapping("/upload")

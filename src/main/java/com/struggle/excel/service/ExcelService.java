@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -27,8 +28,14 @@ public class ExcelService {
     @Autowired
     private ElTableFieldMapper tableFieldMapper;
 
-    // 保存表信息
     @Transactional
+    public void addFields(List<TableData> dataList) {
+        for (TableData tableData : dataList) {
+            this.addFields(tableData);
+        }
+    }
+
+    // 保存表信息
     public void addFields(TableData data) {
         // 保存表信息
         ElTable table = new ElTable();
@@ -53,13 +60,15 @@ public class ExcelService {
         List<ElTableField> list = tableFieldMapper.list(new ElTableField());
         List<TableFieldData> tableFieldDataList = new ArrayList<>();
         for (ElTableField tableField : list) {
-            ElTable table = tableMapper.getById(tableField.getId());
-            List<ElField> fields = fieldMapper.getFields(tableField.getFieldIds());
-            TableFieldData tableFieldData = new TableFieldData();
-            tableFieldData.setTableName(table.getName());
-            tableFieldData.setFieldNames(fields.stream().map(f -> f.getName() + "(" + f.getType() +")").collect(Collectors.joining(",")));
-            tableFieldData.setFieldList(fields);
-            tableFieldDataList.add(tableFieldData);
+            if(Objects.nonNull(tableField.getTabId())) {
+                ElTable table = tableMapper.getById(tableField.getTabId());
+                List<ElField> fields = fieldMapper.getFields(tableField.getFieldIds());
+                TableFieldData tableFieldData = new TableFieldData();
+                tableFieldData.setTableName(table.getName());
+                tableFieldData.setFieldNames(fields.stream().map(f -> f.getName() + "(" + f.getType() + ")").collect(Collectors.joining(",")));
+                tableFieldData.setFieldList(fields);
+                tableFieldDataList.add(tableFieldData);
+            }
         }
         return tableFieldDataList;
     }
