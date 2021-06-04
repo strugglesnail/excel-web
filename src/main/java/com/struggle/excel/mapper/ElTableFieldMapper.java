@@ -30,4 +30,7 @@ public interface ElTableFieldMapper {
     void updateBatch(List<ElTableField> list);
 
     void delete(Long id);
+
+    // 根据表Id获取表数量
+    int getTabIdCount(Long tabId);
 }

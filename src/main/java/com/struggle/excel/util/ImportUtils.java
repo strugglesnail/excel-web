@@ -1,5 +1,6 @@
 package com.struggle.excel.util;
 
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.*;
 
 import java.util.*;
@@ -43,7 +44,20 @@ public class ImportUtils {
         int cellType = cell.getCellType();
         switch (cellType) {
             case Cell.CELL_TYPE_NUMERIC:
-                value = cell.getNumericCellValue();
+                double numericCellValue = cell.getNumericCellValue();
+                short format = cell.getCellStyle().getDataFormat();
+                /*判断日期个格式是否是 2021/01/01 这样
+                 * 14 yyyy-MM-dd / 2017/01/01
+                 * 31 yyyy年m月d日
+                 * */
+                if(format == 14 || format == 31){
+                    Date javaDate = HSSFDateUtil.getJavaDate(numericCellValue);
+                    if (Objects.nonNull(javaDate)) {
+                        value = new java.sql.Date(javaDate.getTime());
+                    }
+                } else {
+                   value = numericCellValue;
+                }
                 break;
             case Cell.CELL_TYPE_STRING:
                 value = cell.getStringCellValue();

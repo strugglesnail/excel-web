@@ -51,12 +51,12 @@ public class ExcelService {
         // 保存表与字段关系信息
         String fieldIds = data.getFields().stream().map(f -> String.valueOf(f.getId())).collect(Collectors.joining(","));
         ElTableField tf = new ElTableField();
-        tf.setTabId(table.getId());
+        tf.setTabId(Objects.isNull(table.getId()) ? existTab.getId(): table.getId());
         tf.setFieldIds(fieldIds);
         tableFieldMapper.save(tf);
     }
 
-    public List<TableFieldData> getFields() {
+    public List<TableFieldData> getTableFields() {
         List<ElTableField> list = tableFieldMapper.list(new ElTableField());
         List<TableFieldData> tableFieldDataList = new ArrayList<>();
         for (ElTableField tableField : list) {
@@ -64,6 +64,7 @@ public class ExcelService {
                 ElTable table = tableMapper.getById(tableField.getTabId());
                 List<ElField> fields = fieldMapper.getFields(tableField.getFieldIds());
                 TableFieldData tableFieldData = new TableFieldData();
+                tableFieldData.setTableFieldId(tableField.getId());
                 tableFieldData.setTableName(table.getName());
                 tableFieldData.setFieldNames(fields.stream().map(f -> f.getName() + "(" + f.getType() + ")").collect(Collectors.joining(",")));
                 tableFieldData.setFieldList(fields);
@@ -71,5 +72,17 @@ public class ExcelService {
             }
         }
         return tableFieldDataList;
+    }
+
+    // 删除表与字段的关联信息
+    @Transactional
+    public void deleteTableField(Long tableFieldId) {
+        ElTableField tableField = tableFieldMapper.getById(tableFieldId);
+        tableFieldMapper.delete(tableFieldId);
+        int tabIdCount = tableFieldMapper.getTabIdCount(tableField.getTabId());
+        if (tabIdCount <= 1) {
+            tableMapper.delete(tableField.getTabId());
+        }
+        fieldMapper.deleteFields(tableField.getFieldIds());
     }
 }

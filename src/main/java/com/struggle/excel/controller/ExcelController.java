@@ -46,13 +46,19 @@ public class ExcelController {
 
     @GetMapping("/getFields")
     public ServerResponse getColumnList() {
-        List<TableFieldData> fields = excelService.getFields();
+        List<TableFieldData> fields = excelService.getTableFields();
         return ServerResponse.createBySuccess(fields);
     }
 
     @PostMapping("/addFields")
     public ServerResponse getColumnList(@RequestBody List<TableData> tableDatas) {
         excelService.addFields(tableDatas);
+        return ServerResponse.createBySuccess();
+    }
+
+    @GetMapping("/deleteTableField")
+    public ServerResponse deleteTableField(Long tableFieldId) {
+        excelService.deleteTableField(tableFieldId);
         return ServerResponse.createBySuccess();
     }
     @PostMapping("/upload")

@@ -34,4 +34,7 @@ public interface ElFieldMapper {
 
     // 获取字段列表
     List<ElField> getFields(@Param("fields") String fields);
+
+    // 删除字段
+    void deleteFields(@Param("fieldIds") String fieldIds);
 }

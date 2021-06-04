@@ -13,7 +13,7 @@ public class DoubleDataType implements DataType<Double> {
 
     @Override
     public String[] type() {
-        return new String[] { "double", "number" };
+        return new String[] { "double", "number", "int" };
     }
 
 

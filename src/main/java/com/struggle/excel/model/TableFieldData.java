@@ -9,11 +9,21 @@ import java.util.List;
  */
 public class TableFieldData {
 
+    private Long tableFieldId;
+
     private String tableName;
 
     private String fieldNames;
 
     private List<ElField> fieldList;
+
+    public Long getTableFieldId() {
+        return tableFieldId;
+    }
+
+    public void setTableFieldId(Long tableFieldId) {
+        this.tableFieldId = tableFieldId;
+    }
 
     public String getTableName() {
         return tableName;

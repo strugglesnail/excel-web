@@ -33,7 +33,7 @@
     SELECT <include refid="el_table_fieldColumns" /> FROM  `el_table_field` <include refid="el_table_fieldDynamicWhere" />
   </select>
   <select id="getById" parameterType="java.lang.Long" resultMap="BaseResultMap">
-     <include refid="el_table_fieldDynamicWhere" /> WHERE id = #{id}
+    SELECT <include refid="el_table_fieldColumns" /> FROM  `el_table_field` WHERE id = #{id}
   </select>
   <select id="getOne" parameterType="com.struggle.excel.model.ElTableField" resultMap="BaseResultMap">
     SELECT <include refid="el_table_fieldColumns" /> FROM  `el_table_field` <include refid="el_table_fieldDynamicWhere" /> LIMIT 1
@@ -97,4 +97,7 @@
   <delete id="delete">
     DELETE FROM `el_table_field` WHERE id = #{id}
   </delete>
+    <select id="getTabIdCount" resultType="int">
+        SELECT COUNT(1) FROM el_table_field WHERE tab_id = #{tabId}
+    </select>
 </mapper>

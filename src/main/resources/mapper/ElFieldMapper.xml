@@ -108,4 +108,9 @@
     <select id="getFields" resultType="com.struggle.excel.model.ElField">
         select id, `index`, `name`, `type` from `el_field`  WHERE id in (${fields})
     </select>
+
+
+    <select id="deleteFields">
+        DELETE FROM `el_field`  WHERE id in (${fieldIds})
+    </select>
 </mapper>

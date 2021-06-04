@@ -50,6 +50,7 @@ public class HandleCenter {
         dataTypeList.add(new DoubleDataType());
         dataTypeList.add(new StringDataType());
         dataTypeList.add(new DateDataType());
+//        dataTypeList.add(new IntegerDataType());
     }
 
     public HandleCenter(Workbook workbook) {
@@ -61,6 +62,7 @@ public class HandleCenter {
         dataTypeList.add(new DoubleDataType());
         dataTypeList.add(new StringDataType());
         dataTypeList.add(new DateDataType());
+//        dataTypeList.add(new IntegerDataType());
     }
 
 
@@ -120,11 +122,13 @@ public class HandleCenter {
 
     public void core(Map<String, TableData> map) throws Exception {
         // 线程
-        StringBuilder builder = new StringBuilder();
         PreparedStatement statement = null;
         conn.setAutoCommit(false);
+
+        try {
         // 遍历每一个sheet
         for (Map.Entry<String, TableData> entry : map.entrySet()) {
+            StringBuilder builder = new StringBuilder();
             // sheet名称
             String key = entry.getKey();
             // sheet数据
@@ -145,6 +149,7 @@ public class HandleCenter {
 
             // 插入SQL
             String sql = builder.toString();
+            System.out.println(sql);
             statement = conn.prepareStatement(sql);
 
             // 2.根据key获取sheet表格数据
@@ -159,8 +164,13 @@ public class HandleCenter {
             conn.commit();
             statement.clearBatch();
         }
-        // 关闭连接
-        ConnectionUtils.close(conn, statement, null);
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            // 关闭连接
+            ConnectionUtils.close(conn, statement, null);
+        }
+
     }
 
     private void mappingSheetDataToField(PreparedStatement statement, List<ElField> fieldList, Map<Integer, List<Object>> sheetData) throws SQLException {
@@ -196,6 +206,7 @@ public class HandleCenter {
         for (DataType dataType : dataTypeList) {
             boolean anyMatch = Arrays.stream(dataType.type()).anyMatch(t -> t.equals(field.getType()));
             if (anyMatch) {
+                System.out.println(anyMatch + "     " + svalue.get(field.getIndex() - 1) + "      " + field.getType());
                 dataType.setDataType(statement, i+ 1, svalue.get(field.getIndex() - 1));
                 break;
             }
